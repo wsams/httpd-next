@@ -1,0 +1,15 @@
+services:
+  httpd-next:
+    image: wsams/httpd-next:stack-local
+    ports:
+      - "443:443"
+      - "80:80"
+    environment:
+      - NGINX_SERVER_NAME=localhost
+      - SSL_CERTIFICATE_FILE=/nginx-cert.pem
+      - SSL_CERTIFICATE_KEY_FILE=/nginx-key.pem
+    volumes:
+      # Optional: mount your app trees over the baked-in examples.
+      - ./examples/php:/var/www/html
+      - ./examples/python:/var/www/python
+    restart: unless-stopped

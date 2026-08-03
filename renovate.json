@@ -1,0 +1,39 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":semanticCommitTypeAll(fix)",
+    ":semanticCommitScope(deps)"
+  ],
+  "labels": ["dependencies"],
+  "timezone": "America/Los_Angeles",
+  "automerge": true,
+  "automergeType": "pr",
+  "platformAutomerge": true,
+  "automergeStrategy": "squash",
+  "dependencyDashboard": true,
+  "rangeStrategy": "pin",
+  "packageRules": [
+    {
+      "description": "Automerge all dependency updates",
+      "matchUpdateTypes": ["patch", "minor", "major", "digest", "pin", "pinDigest"],
+      "automerge": true
+    },
+    {
+      "description": "Group GitHub Actions updates",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions"
+    },
+    {
+      "description": "Group npm semantic-release related packages",
+      "matchManagers": ["npm"],
+      "groupName": "semantic-release"
+    },
+    {
+      "description": "Group Python example requirements",
+      "matchManagers": ["pip_requirements"],
+      "groupName": "python-deps"
+    }
+  ]
+}

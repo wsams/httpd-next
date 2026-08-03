@@ -1,0 +1,59 @@
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+  server_name ${NGINX_SERVER_NAME};
+
+  root /var/www/html;
+  index index.php index.html;
+
+  location / {
+    try_files $uri $uri/ /index.php?$query_string;
+  }
+
+  location ~ \.php$ {
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_pass unix:/run/php/php-fpm.sock;
+    fastcgi_hide_header X-Powered-By;
+  }
+
+  location ~ /\. {
+    deny all;
+  }
+}
+
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+  http2 on;
+  server_name ${NGINX_SERVER_NAME};
+
+  ssl_certificate ${SSL_CERTIFICATE_FILE};
+  ssl_certificate_key ${SSL_CERTIFICATE_KEY_FILE};
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_prefer_server_ciphers off;
+
+  add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
+  add_header X-Frame-Options DENY always;
+  add_header X-Content-Type-Options nosniff always;
+  add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+  add_header Content-Security-Policy "default-src 'self'; frame-ancestors 'none'; base-uri 'self'" always;
+
+  root /var/www/html;
+  index index.php index.html;
+
+  location / {
+    try_files $uri $uri/ /index.php?$query_string;
+  }
+
+  location ~ \.php$ {
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_pass unix:/run/php/php-fpm.sock;
+    fastcgi_hide_header X-Powered-By;
+  }
+
+  location ~ /\. {
+    deny all;
+  }
+}
