@@ -115,7 +115,7 @@ Same PR should update, when relevant:
 
 ## Out of scope / escalate to humans
 
-* Rotating or creating `RENOVATE_TOKEN`, Docker Hub credentials, or GitHub auto-merge settings
+* Rotating or creating `RENOVATE_TOKEN`, `DOCKER_USERNAME` / `DOCKER_PASSWORD`, or GitHub auto-merge settings
 * Changing the published image name away from `wsams/httpd-next` without an explicit request
 * Adding a second edge server (Caddy/FrankenPHP) without updating SPECS and agreeing on tag layout
 * Anything that would break compatibility with the parent `wsams/httpd` project’s role (this repo complements it; it does not replace the need for that repo’s Apache images)
