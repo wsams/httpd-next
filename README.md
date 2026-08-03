@@ -84,8 +84,8 @@ Example apps live under `examples/` (`php/`, `python/`, `go/`, `static/`).
 | Secret | Purpose |
 | --- | --- |
 | `RENOVATE_TOKEN` | Classic PAT (or GitHub App token) with `repo` + `workflow` for the Renovate workflow |
-| `REGISTERY_USERNAME` | Docker Hub username (spelling matches the parent `httpd` repo) |
-| `REGISTRY_PASSWORD` | Docker Hub password/token |
+| `DOCKER_USERNAME` | Docker Hub username |
+| `DOCKER_PASSWORD` | Docker Hub password or access token |
 
 ## What changed vs `wsams/httpd`
 
