@@ -8,7 +8,10 @@ Modern successor to [`wsams/httpd`](https://github.com/wsams/httpd). The legacy 
                           └──> Go       http://127.0.0.1:8080  (net/http)
 ```
 
-See [AGENTS.md](./AGENTS.md) for architecture decisions and agent guidance.
+Project docs:
+
+* [SPECS.md](./SPECS.md) — normative technical contracts (tags, routes, env vars, security, release)
+* [AGENTS.md](./AGENTS.md) — intent, hard constraints, and how to maintain this repo
 
 ## Image tags
 
