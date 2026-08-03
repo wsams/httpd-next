@@ -22,7 +22,6 @@ RUN apt-get update && \
         php-gd \
         php-mbstring \
         php-mysql \
-        php-opcache \
         php-sqlite3 \
         php-xml \
         php-zip \
@@ -39,7 +38,7 @@ RUN apt-get update && \
     mkdir -p /run/php && \
     chown www-data:www-data /run/php && \
     chmod 755 /etc/s6-overlay/s6-rc.d/php-fpm/run && \
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/php-fpm && \
+    touch /etc/s6-overlay/user-bundles.d/user/contents.d/php-fpm && \
     rm -f /tmp/zz-docker.conf /tmp/security.ini && \
     apt-get -y autoremove && \
     apt-get -y clean && \

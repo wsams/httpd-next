@@ -24,7 +24,7 @@ RUN apt-get update && \
         python3-venv && \
     pip3 install --no-cache-dir -r /tmp/requirements.txt && \
     chmod 755 /etc/s6-overlay/s6-rc.d/uvicorn/run && \
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/uvicorn && \
+    touch /etc/s6-overlay/user-bundles.d/user/contents.d/uvicorn && \
     rm -f /tmp/requirements.txt && \
     apt-get -y autoremove && \
     apt-get -y clean && \

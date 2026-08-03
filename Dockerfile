@@ -28,7 +28,7 @@ RUN apt-get update && \
     apt-get -y clean && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p /var/www/html /etc/nginx/templates /etc/nginx/conf.d \
-        /etc/s6-overlay/s6-rc.d/user/contents.d && \
+        /etc/s6-overlay/user-bundles.d/user/contents.d && \
     rm -f /etc/nginx/sites-enabled/default && \
     openssl req -x509 -nodes -days 365 -newkey rsa:4096 -sha256 \
         -subj "/C=US/ST=Xaero/L=Pepper/O=Zoopaz/OU=Zoopaz/CN=localhost" \
@@ -41,7 +41,7 @@ COPY docker/s6/base/nginx/type /etc/s6-overlay/s6-rc.d/nginx/type
 COPY examples/static/index.html /var/www/html/index.html
 
 RUN chmod 755 /etc/s6-overlay/s6-rc.d/nginx/run && \
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/nginx
+    touch /etc/s6-overlay/user-bundles.d/user/contents.d/nginx
 
 EXPOSE 80 443
 
