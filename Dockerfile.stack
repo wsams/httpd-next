@@ -1,0 +1,82 @@
+# Stack flavor: polyglot Nginx + PHP-FPM + Uvicorn + Go via s6-overlay.
+# docker build -t wsams/httpd-next:stack-local -f Dockerfile.stack --build-arg BASE_IMAGE=wsams/httpd-next:local .
+
+ARG GO_BUILD_IMAGE=golang:1.24-bookworm
+ARG BASE_IMAGE=wsams/httpd-next:latest
+
+FROM ${GO_BUILD_IMAGE} AS go-build
+
+WORKDIR /src
+COPY examples/go/go.mod ./
+COPY examples/go/main.go ./
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/goapp .
+
+FROM ${BASE_IMAGE}
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    NGINX_TEMPLATE=/etc/nginx/templates/stack.conf.template \
+    PYTHON_APP_MODULE=app:app \
+    PYTHON_APP_DIR=/var/www/python \
+    PYTHON_HOST=127.0.0.1 \
+    PYTHON_PORT=8000 \
+    GO_APP_BIN=/usr/local/bin/goapp \
+    GO_APP_ADDR=127.0.0.1:8080 \
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
+    GOTOOLCHAIN=local
+
+COPY docker/nginx/templates/stack.conf.template /etc/nginx/templates/stack.conf.template
+COPY docker/php/zz-docker.conf /tmp/zz-docker.conf
+COPY docker/php/security.ini /tmp/security.ini
+COPY docker/s6/php/php-fpm/run /etc/s6-overlay/s6-rc.d/php-fpm/run
+COPY docker/s6/php/php-fpm/type /etc/s6-overlay/s6-rc.d/php-fpm/type
+COPY docker/s6/python/uvicorn/run /etc/s6-overlay/s6-rc.d/uvicorn/run
+COPY docker/s6/python/uvicorn/type /etc/s6-overlay/s6-rc.d/uvicorn/type
+COPY docker/s6/go/goapp/run /etc/s6-overlay/s6-rc.d/goapp/run
+COPY docker/s6/go/goapp/type /etc/s6-overlay/s6-rc.d/goapp/type
+COPY examples/php/index.php /var/www/html/index.php
+COPY examples/python/app.py /var/www/python/app.py
+COPY examples/python/requirements.txt /tmp/requirements.txt
+COPY --from=go-build /out/goapp /usr/local/bin/goapp
+
+RUN apt-get update && \
+    apt-get -y install --no-install-recommends \
+        composer \
+        golang-go \
+        php-cli \
+        php-curl \
+        php-fpm \
+        php-gd \
+        php-mbstring \
+        php-mysql \
+        php-sqlite3 \
+        php-xml \
+        php-zip \
+        python3 \
+        python3-pip \
+        python3-venv \
+        unzip \
+        zip && \
+    PHP_VER="$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')" && \
+    ln -sf "/usr/sbin/php-fpm${PHP_VER}" /usr/local/sbin/php-fpm && \
+    rm -f "/etc/php/${PHP_VER}/fpm/pool.d/www.conf" && \
+    cp /tmp/zz-docker.conf "/etc/php/${PHP_VER}/fpm/pool.d/www.conf" && \
+    cp /tmp/security.ini "/etc/php/${PHP_VER}/fpm/conf.d/99-httpd-next-security.ini" && \
+    cp /tmp/security.ini "/etc/php/${PHP_VER}/cli/conf.d/99-httpd-next-security.ini" && \
+    printf '%s\n' "${PHP_VER}" > /etc/httpd-next-php-version && \
+    sed -i "s|^pid = .*|pid = /run/php/php-fpm.pid|" "/etc/php/${PHP_VER}/fpm/php-fpm.conf" && \
+    mkdir -p /run/php && \
+    chown www-data:www-data /run/php && \
+    pip3 install --no-cache-dir -r /tmp/requirements.txt && \
+    chmod 755 \
+        /usr/local/bin/goapp \
+        /etc/s6-overlay/s6-rc.d/php-fpm/run \
+        /etc/s6-overlay/s6-rc.d/uvicorn/run \
+        /etc/s6-overlay/s6-rc.d/goapp/run && \
+    touch \
+        /etc/s6-overlay/user-bundles.d/user/contents.d/php-fpm \
+        /etc/s6-overlay/user-bundles.d/user/contents.d/uvicorn \
+        /etc/s6-overlay/user-bundles.d/user/contents.d/goapp && \
+    rm -f /tmp/zz-docker.conf /tmp/security.ini /tmp/requirements.txt && \
+    apt-get -y autoremove && \
+    apt-get -y clean && \
+    rm -rf /var/lib/apt/lists/*

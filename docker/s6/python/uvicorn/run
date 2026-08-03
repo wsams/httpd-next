@@ -1,0 +1,10 @@
+#!/command/with-contenv sh
+set -e
+
+APP_MODULE="${PYTHON_APP_MODULE:-app:app}"
+APP_DIR="${PYTHON_APP_DIR:-/var/www/python}"
+HOST="${PYTHON_HOST:-127.0.0.1}"
+PORT="${PYTHON_PORT:-8000}"
+
+cd "${APP_DIR}"
+exec uvicorn "${APP_MODULE}" --host "${HOST}" --port "${PORT}" --proxy-headers

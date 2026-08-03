@@ -1,0 +1,43 @@
+name: Republish Docker images
+
+# Manual republish only. Versioned image publishes happen inside semantic-release
+# via @semantic-release/exec (GITHUB_TOKEN releases do not trigger other workflows).
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version tag without leading v (for example 1.2.3)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: wsams/httpd-next
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: v${{ inputs.version }}
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v4.6.0
+        with:
+          username: ${{ secrets.REGISTERY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and push release images
+        run: |
+          chmod +x scripts/build-images.sh docker/install-s6.sh
+          PUSH=true \
+            FLOAT_BASE=latest \
+            FLOAT_PHP=php \
+            FLOAT_PYTHON=python \
+            FLOAT_GO=go \
+            FLOAT_STACK=stack \
+            IMAGE_NAME="${IMAGE_NAME}" \
+            ./scripts/build-images.sh "${{ inputs.version }}"

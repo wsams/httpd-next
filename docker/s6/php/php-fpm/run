@@ -1,0 +1,5 @@
+#!/command/with-contenv sh
+set -e
+mkdir -p /run/php
+PHP_VER="$(cat /etc/httpd-next-php-version)"
+exec /usr/local/sbin/php-fpm --nodaemonize --fpm-config "/etc/php/${PHP_VER}/fpm/php-fpm.conf"

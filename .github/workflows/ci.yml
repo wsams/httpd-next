@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: wsams/httpd-next
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Build all image flavors
+        run: |
+          chmod +x scripts/build-images.sh scripts/test-images.sh docker/install-s6.sh
+          IMAGE_NAME="${IMAGE_NAME}" ./scripts/build-images.sh ci
+
+      - name: Smoke-test image flavors
+        run: |
+          IMAGE_NAME="${IMAGE_NAME}" ./scripts/test-images.sh ci

@@ -1,0 +1,8 @@
+#!/command/with-contenv sh
+set -e
+
+GO_APP_BIN="${GO_APP_BIN:-/usr/local/bin/goapp}"
+GO_APP_ADDR="${GO_APP_ADDR:-127.0.0.1:8080}"
+
+export GO_APP_ADDR
+exec "${GO_APP_BIN}"

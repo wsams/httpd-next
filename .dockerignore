@@ -1,0 +1,12 @@
+.git
+.github
+node_modules
+package-lock.json
+*.md
+LICENSE
+Makefile
+sample.docker-compose.yml
+release.config.cjs
+renovate.json
+.gitignore
+.dockerignore
