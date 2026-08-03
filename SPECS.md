@@ -206,7 +206,7 @@ IMAGE_NAME=wsams/httpd-next ./scripts/test-images.sh <version>
 
 - Nightly: `.github/workflows/docker-nightly.yml` (`0 3 * * *`)
 - Manual republish: `.github/workflows/docker-publish.yml` (`workflow_dispatch` with version)
-- Docker Hub secrets: `REGISTERY_USERNAME` (historic spelling), `REGISTRY_PASSWORD`
+- Docker Hub secrets: `DOCKER_USERNAME`, `DOCKER_PASSWORD`
 
 ## 9. Compatibility and upgrade notes
 
