@@ -1,7 +1,7 @@
 # Stack flavor: polyglot Nginx + PHP-FPM + Uvicorn + Go via s6-overlay.
 # docker build -t wsams/httpd-next:stack-local -f Dockerfile.stack --build-arg BASE_IMAGE=wsams/httpd-next:local .
 
-ARG GO_BUILD_IMAGE=golang:1.24-bookworm
+ARG GO_BUILD_IMAGE=golang:1.26-bookworm
 ARG BASE_IMAGE=wsams/httpd-next:latest
 
 FROM ${GO_BUILD_IMAGE} AS go-build
