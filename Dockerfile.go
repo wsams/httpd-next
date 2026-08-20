@@ -2,7 +2,7 @@
 # Multi-stage: build the example binary, then layer onto the base image.
 # docker build -t wsams/httpd-next:go-local -f Dockerfile.go --build-arg BASE_IMAGE=wsams/httpd-next:local .
 
-ARG GO_BUILD_IMAGE=golang:1.26-bookworm
+ARG GO_BUILD_IMAGE=golang:1.27-bookworm
 ARG BASE_IMAGE=wsams/httpd-next:latest
 
 FROM ${GO_BUILD_IMAGE} AS go-build
